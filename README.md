@@ -6,6 +6,7 @@ SBCL. CCL, CMUCL
 -- **roswell** --
 
 $ ros install lisp3dev/lisp3dev
+
 $ ros install lisp3dev/lisp3adv
 
 -- **git** --
@@ -13,6 +14,7 @@ $ ros install lisp3dev/lisp3adv
 $ cd quicklisp/local-projects
 
 $ git clone https://github.com/lisp3dev/lisp3dev
+
 $ git clone https://github.com/lisp3dev/lisp3adv
 
 CL> (ql:register-local-projects)
