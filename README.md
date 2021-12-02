@@ -5,21 +5,19 @@ SBCL. CCL, CMUCL
 
 -- **roswell** --
 
-$ ros install junneko.net/cl-jkit
-
-$ ros install junneko.net/cl-jkit-plus
+$ ros install lisp3dev/lisp3dev
+$ ros install lisp3dev/lisp3adv
 
 -- **git** --
 
 $ cd quicklisp/local-projects
 
-$ git clone https://github.com/junneko.net/cl-jkit
-
-$ git clone https://github.com/junneko.net/cl-jkit-plus
+$ git clone https://github.com/lisp3dev/lisp3dev
+$ git clone https://github.com/lisp3dev/lisp3adv
 
 CL> (ql:register-local-projects)
 
 
 -- **load** --
 
-CL> (ql:quickload :jkit+)
+CL> (ql:quickload :lisp3adv)
