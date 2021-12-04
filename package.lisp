@@ -4,17 +4,17 @@
 
 (lisp3dev:define-package :lisp3adv ()
   (:use :cl)
-  (:nicknames :3adv :3dev+)
+  (:nicknames :3adv)
   (:import-from :lisp3dev #:full-mode)
   (:import/export :lisp3dev.advanced)
 
-  (:export  #:lang-mode #:full-mode)
+  (:export  #:advanced-mode #:full-mode)
 
   )
 
 (in-package :lisp3adv)
 
-(defmacro lang-mode (&rest other-modes)
+(defmacro advanced-mode (&rest other-modes)
   `(lisp3dev.base:lisp3dev-base-header :advanced :lpar :mspace ,@other-modes))
 
 
