@@ -5,18 +5,22 @@
 (lisp3dev:define-package :lisp3adv ()
   (:use :cl)
   (:nicknames :3adv)
-  (:import-from :lisp3dev #:full-mode)
+  ;(:import-from :lisp3dev #:use-reader)
   (:import/export :lisp3dev.advanced)
 
-  (:export  #:advanced-mode #:full-mode)
-
+  (:export  #:use-fp-reader #:use-advanced-reader)
+  
   )
 
 (in-package :lisp3adv)
 
-(defmacro advanced-mode (&rest other-modes)
-  `(lisp3dev.base:lisp3dev-base-header :advanced :lpar :mspace ,@other-modes))
-
+(defmacro use-advanced-reader ()
+  `(eval-when (:compile-toplevel :load-toplevel :execute)
+     (lisp3dev.base:enable-reader nil)))
+   
+(defmacro use-fp-reader ()
+  `(eval-when (:compile-toplevel :load-toplevel :execute)
+     (lisp3dev.base:enable-reader '(:lpar :mspace))))
 
 
 

@@ -141,10 +141,6 @@
 
 
 
-(defun <register-readers> ()
-
-
-  )
 
 ;(SETF (READTABLE-CASE *READTABLE*) :UPCASE)
 
@@ -419,6 +415,7 @@
 
 ;;;
 
+
 (lisp3dev.base:define-lpar-backslash-reader "XENV" (stream)
   (qi-reader stream))
 
@@ -530,4 +527,4 @@
 ;;             (setq bar-flag (eq c #\|))))))
 
 
-(lisp3dev.base:register-reader-registerer :advanced '<register-readers>)
+;(lisp3dev.base:register-reader-registerer :advanced '<register-readers>)
