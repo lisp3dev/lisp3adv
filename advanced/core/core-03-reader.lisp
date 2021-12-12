@@ -311,7 +311,7 @@
 ;; [2018-07-14] Added
 (DEFUN <arrow?> (x) (OR (EQ '-> x) (EQ '<- x)))
 (DEFUN <not-arrow?> (x) (NOT (<arrow?> x)))
-(DEFUN <transform/case-where> (xs &AUX (len (LIST-LENGTH xs)))
+'(DEFUN <transform/case-where> (xs &AUX (len (LIST-LENGTH xs)))
   (WHEN (OR (MEMBER-IF (LAMBDA (x) (MEMBER x '(|,|)))
                        xs)
             (NOT (EQL 0 (MOD len 3))))
@@ -327,7 +327,34 @@
       (UNLESS (AND (<not-arrow?> test-exp) (<arrow?> arrow) (<not-arrow?> main-exp))
         (ERROR "(case where... SYNTAX ERROR: ... ~A ~A ~A ..." test-exp arrow main-exp))
       (PUSH (LIST '_ '|,| test-exp arrow main-exp) tmp))))
-       
+
+;; [2021-12-12] FIX by Jun
+;; E1 <- E2,E3 のような入力列を正しく処理するよう訂正
+(DEFUN <transform/case-where> (xs &AUX (len (LIST-LENGTH xs)))
+
+  (LET ((n-comma (COUNT '|,| xs)))
+    (LET ((m (- len (* n-comma 2))))
+      (UNLESS (AND (> m 0) (EQL 0 (MOD m 3)))
+        (ERROR "(case where ... SYNTAX ERROR: ~A" xs)))
+    
+    
+    (DO ((H xs (IF (EQL (CAR H) '|,|) (CDDR H) (CDDDR H)))
+         tmp)
+        ((NULL H) (APPLY #'NCONC (NREVERSE tmp)))
+
+      (FLET ((maybe-expr? (x) (AND (<not-arrow?> x) (NOT (EQ '|,| x)))))
+        (COND ((AND (NOT (EQ H xs))
+                    (EQL (CAR H) '|,|))
+                (UNLESS (maybe-expr? (CADR H))
+                  (ERROR "(case where... SYNTAX ERROR(GUARD CLAUSE): ... , ~A ..." (CADR H)))
+                (PUSH (LIST '|,| (CADR H)) tmp))
+              (T (LET ((test-exp (FIRST H))
+                       (arrow (SECOND H))
+                       (main-exp (THIRD H)))
+                   (UNLESS (AND (maybe-expr? test-exp) (<arrow?> arrow) (maybe-expr? main-exp))
+                     (ERROR "(case where... SYNTAX ERROR: ... ~A ~A ~A ..." test-exp arrow main-exp))
+                   (PUSH (LIST '_ '|,| test-exp arrow main-exp) tmp))))))))
+
 ;; Added by JUN
 (DEFUN <rule/body/transform> (xs)
   (WHEN (MEMBER-IF (LAMBDA (x) (MEMBER x '(<- |,|)))
