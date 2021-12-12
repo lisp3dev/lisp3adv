@@ -120,7 +120,7 @@
                (return t))))))
 
 
-(defmacro declare-for-qi (lisp-name qi-signature)
+'(defmacro declare-for-qi (lisp-name qi-signature)
   (let* ((qi-name (if (get lisp-name '<qi-name>)
                     (get lisp-name '<qi-name>)
                     (setf (get lisp-name '<qi-name>)
@@ -133,7 +133,7 @@
 
     `(progn
       (defun ,qi-name ,tmp-vars (,lisp-name ,@tmp-vars))
-      (define-compiler-macro ,qi-name ,tmp-vars (list ',lisp-name ,@tmp-vars))
+      ;(define-compiler-macro ,qi-name ,tmp-vars (list ',lisp-name ,@tmp-vars))
       (~declare ',qi-name ',qi-signature)
       ',lisp-name)))
 

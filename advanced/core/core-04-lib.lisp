@@ -121,18 +121,18 @@
   (XTUPLE* a b))
 
 (DEFUN TUPLE-P (x) (XTUPLE-P x))
-(DEFINE-COMPILER-MACRO TUPLE-P (x) `(XTUPLE-P ,x))
+'(DEFINE-COMPILER-MACRO TUPLE-P (x) `(XTUPLE-P ,x))
 
 (DEFUN fst (tuple)  (XTUPLE-FST tuple))
 (DEFUN snd (tuple)  (XTUPLE-SND tuple))
-(DEFINE-COMPILER-MACRO fst (tuple)  `(XTUPLE-FST ,tuple))
-(DEFINE-COMPILER-MACRO snd (tuple)  `(XTUPLE-SND ,tuple))
+'(DEFINE-COMPILER-MACRO fst (tuple)  `(XTUPLE-FST ,tuple))
+'(DEFINE-COMPILER-MACRO snd (tuple)  `(XTUPLE-SND ,tuple))
 
 
 (DEFUN (SETF fst) (val x)  (SETF (XTUPLE-FST x) val))
 (DEFUN (SETF snd) (val x)  (SETF (XTUPLE-SND) val))
-(DEFINE-COMPILER-MACRO (SETF fst) (val x)  `(SETF (XTUPLE-FST ,x) ,val))
-(DEFINE-COMPILER-MACRO (SETF snd) (val x)  `(SETF (XTUPLE-SND ,x) ,val))
+'(DEFINE-COMPILER-MACRO (SETF fst) (val x)  `(SETF (XTUPLE-FST ,x) ,val))
+'(DEFINE-COMPILER-MACRO (SETF snd) (val x)  `(SETF (XTUPLE-SND ,x) ,val))
 
 (DEFMACRO |@sv| (&REST elems)
   (CONS 'VECTOR elems))
@@ -145,15 +145,16 @@
   (ASSERT (AND 'svref (SIMPLE-VECTOR-P x) (NON-NEGATIVE-INTEGER-P index)))
   (SVREF x index))
 (DEFUN (SETF svref) (val x index)  (SETF (SVREF x index) val))
-(DEFINE-COMPILER-MACRO (SETF svref) (val x index)  `(SETF (SVREF ,x ,index) ,val))
+'(DEFINE-COMPILER-MACRO (SETF svref) (val x index)  `(SETF (SVREF ,x ,index) ,val))
 
 (DEFUN <error/if> (X)
   (error "~S is not a boolean~%" X))
 
 (DEFMACRO if (X Y Z)
- `(LET ((C ,X))
-   (COND ((EQ C 'true) ,Y) ((EQ C 'false) ,Z)
-    (T (<error/if> C)))))
+  (LET ((tmp (MEMOIZED (GENSYM "BOOL"))))
+    `(LET ((,tmp ,X))
+       (COND ((EQ ,tmp 'true) ,Y) ((EQ ,tmp 'false) ,Z)
+             (T (<error/if> ,tmp))))))
 
 ;;(DEFMACRO and (X Y) `(if ,X (if ,Y 'true 'false) 'false))
 ;;(DEFMACRO or (X Y) `(if ,X 'true (if ,Y 'true 'false)))

@@ -676,6 +676,7 @@
   ;(FORMAT T "<DEBUG:case-whole>=~W~%" whole)
   (LET* ((raw (fake-string-info fake-string))
          (source-exps (FIRST raw))
+         ;;  (source-exps (MAPCAR (LAMBDA (E) `(IDENTITY ,E)) source-exps))
          (arity (LIST-LENGTH source-exps))
          (rule-body (REST raw))
          (<name> `(,rule-body dummy-name))

@@ -287,18 +287,25 @@
         (WHEN raise-error
           (ERROR "not a complex expression"))))))
            
+
+
+;; SBCLの最適化で挙動がおかしくなる問題への場当たり的な対処
+(DEFUN <03/identity> (x) x)
+(DEFMACRO <03/opt-protection> (x)
+  `(<03/identity> ,x))
+
 ;; 複合式をリスト化
 ;; 入力元の複合式は、<complex-expressions-p>が非NILを返すことを前提とする
 (DEFUN <list-complex-expressions> (complex-exps)
   (DO ((p complex-exps (CDDR p))
        tmp)
       ((NULL p) (NREVERSE tmp))
-    (PUSH (FIRST p) tmp)))
-             
+    (PUSH `(<03/opt-protection> ,(FIRST p)) tmp)))
+
 (DEFUN <ensure-complex-expressions> (x)
   (IF (<complex-expressions-p> x :raise-error T)
     (<list-complex-expressions> x)
-    (LIST x)))
+    (LIST `(<03/opt-protection> ,x))))
 
       
 ;; [2018-07-14] Added
@@ -451,13 +458,15 @@
 
 
 
-
 (DEFUN proc_specialforms (V1)
   ;;(PRINT (LIST V1))
   (COND
 
-    ;; Added NOW TESTING...
+    ;; case
     ((AND (CONSP V1) (EQ 'case (CAR V1)))
+                              
+      ;(PRINT V1)
+      
       (IF (EQ 'where (SECOND V1))
         `(<<case>> (NIL)
                    ,@(proc_specialforms (<rule/body/transform> (<transform/case-where> (CDDR V1)))))

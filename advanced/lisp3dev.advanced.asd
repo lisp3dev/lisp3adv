@@ -29,10 +29,6 @@
 
                (:file "embed-test")
                (:file "embed-test-pattern-match")
-               (:file "embed-test-where")
-               (:file "embed-test-let")
-               (:file "embed-test-case")
-               (:file "embed-devel")
 
                ))
 
