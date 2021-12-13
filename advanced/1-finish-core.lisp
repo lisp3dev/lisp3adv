@@ -195,18 +195,18 @@
 
     (when reserve-op-mode
       (unless (member c '(#\- #\= #\< #\>))
-        (cond (NIL (equal '(#\-) reserve-op-mode)
-                ;; 一文字の-記号は、数値の符号またはシンボルの一部と見做す
-                (push #\- tmp))
-              ((let ((n (length reserve-op-mode)))
-                 (and (> n 2)
-                      (member (first reserve-op-mode) '(#\- #\=))
-                      (= n (count (first reserve-op-mode) reserve-op-mode))))
-                ;; ３文字以上連続する{=,-}は３文字。-は_に内部変換することに注意。
-                (setq tmp (nconc (if (eql #\- (first reserve-op-mode))
-                                   (list #\Space #\_ #\_ #\_ #\Space)
-                                   (list #\Space #\= #\= #\= #\Space))
-                                 tmp)))
+        (cond ;; (NIL (equal '(#\-) reserve-op-mode)
+              ;;   ;; 一文字の-記号は、数値の符号またはシンボルの一部と見做す
+              ;;   (push #\- tmp))
+              ;; (NIL (let ((n (length reserve-op-mode)))
+              ;;    (and (> n 2)
+              ;;         (member (first reserve-op-mode) '(#\- #\=))
+              ;;         (= n (count (first reserve-op-mode) reserve-op-mode))))
+              ;;   ;; ３文字以上連続する{=,-}は３文字。-は_に内部変換することに注意。
+              ;;   (setq tmp (nconc (if (eql #\- (first reserve-op-mode))
+              ;;                      (list #\Space #\_ #\_ #\_ #\Space)
+              ;;                      (list #\Space #\= #\= #\= #\Space))
+              ;;                    tmp)))
                       
               (t
                 ;;(setq tmp (nconc (list #\Space) reserve-op-mode (list #\Space) tmp)))
