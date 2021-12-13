@@ -36,22 +36,22 @@
 
 (IN-PACKAGE :LISP3DEV.ADVANCED.CORE)
 
-(DEFUN qi ()
- (PROG ()
-       (credits)
-       LOOP    
-       (initialise_environment)
-       (prompt) 
-       (FORCE-OUTPUT)
-       (HANDLER-CASE 
-          (read-evaluate-print) (ERROR (condition) (PRINC condition)))
-       (GO LOOP)))
+;; (DEFUN qi ()
+;;  (PROG ()
+;;        (credits)
+;;        LOOP    
+;;        (initialise_environment)
+;;        (prompt) 
+;;        (FORCE-OUTPUT)
+;;        (HANDLER-CASE 
+;;           (read-evaluate-print) (ERROR (condition) (PRINC condition)))
+;;        (GO LOOP)))
 
-(DEFUN credits ()
-  (FORMAT T "~%Qi II 2008, Copyright (C) 2001-2008 Mark Tarver~%")
-  (output "www.lambdassociates.org~%") (output "~A~%" *version*))
+;; (DEFUN credits ()
+;;   (FORMAT T "~%Qi II 2008, Copyright (C) 2001-2008 Mark Tarver~%")
+;;   (output "www.lambdassociates.org~%") (output "~A~%" *version*))
 
-(SETQ *version* "version 1.06")
+;; (SETQ *version* "version 1.06")
 
 (DEFUN initialise_environment NIL
    (SETQ *call* 0) 
@@ -61,28 +61,32 @@
 
 (SETQ *history* NIL)
 
-(DEFUN read-evaluate-print NIL
- (LET ((Lineread (toplineread)))
-  (LET ((History (value '*history*)))
-   (LET ((NewLineread (retrieve-from-history-if-needed Lineread History)))
-    (LET ((NewHistory (update_history NewLineread History)))
-     (LET ((Parsed (fst NewLineread))) (toplevel Parsed)))))))
+;; (DEFUN read-evaluate-print NIL
+;;  (LET ((Lineread (toplineread)))
+;;   (LET ((History (value '*history*)))
+;;    (LET ((NewLineread (retrieve-from-history-if-needed Lineread History)))
+;;     (LET ((NewHistory (update_history NewLineread History)))
+;;      (LET ((Parsed (fst NewLineread))) (toplevel Parsed)))))))
 
-(DEFUN toplineread () (toplineread_loop (READ-CHAR) NIL))
+;; (DEFUN toplineread () (toplineread_loop (READ-CHAR) NIL))
 
-(DEFUN toplineread_loop (V94 V95)
- (COND ((EQL #\^ V94) (error "line read aborted"))
-  ((wrapper (element? V94 (LIST #\Newline #\Return)))
-   (LET ((Line (compile '<st_input> V95)))
-    (if (THE SYMBOL (or (qi_= Line 'fail!) (THE SYMBOL (empty? Line))))
-     (toplineread_loop (READ-CHAR) (APPEND V95 (LIST V94))) (@p Line V95))))
-  (T (toplineread_loop (READ-CHAR) (APPEND V95 (LIST V94))))))
+;; (DEFUN toplineread_loop (V94 V95)
+;;  (COND ((EQL #\^ V94) (error "line read aborted"))
+;;   ((wrapper (element? V94 (LIST #\Newline #\Return)))
+;;    (LET ((Line (compile '<st_input> V95)))
+;;     (if (THE SYMBOL (or (qi_= Line 'fail!) (THE SYMBOL (empty? Line))))
+;;      (toplineread_loop (READ-CHAR) (APPEND V95 (LIST V94))) (@p Line V95))))
+;;   (T (toplineread_loop (READ-CHAR) (APPEND V95 (LIST V94))))))
 
-(DEFUN tc (V101)
- (COND ((EQ '+ V101) (SETQ *tc* 'true)) ((EQ '- V101) (SETQ *tc* 'false))
-  (T (error "tc expects a + or -"))))
 
-(tc '-)
+;; (DEFUN tc (V101)
+;;  (COND ((EQ '+ V101) (SETQ *tc* 'true)) ((EQ '- V101) (SETQ *tc* 'false))
+;;   (T (error "tc expects a + or -"))))
+
+;; (tc '-)
+
+(DEFPARAMETER *tc* 'false)
+
 
 (DEFUN prompt NIL
  (if *tc* (FORMAT T "~%~%(~A+) " (LIST-LENGTH *history*))

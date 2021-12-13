@@ -697,7 +697,7 @@
                  (1 (LIST '|@p| data-tag (CAR args)))
                  (T `(|@p| ,data-tag (|@sv| ,@args)))))
               ((> n data-arity) (ERROR "too many arguments for (~A ...): ~A" ctor V1))
-              ((EQL 0 n) (ERROR "illegal data construction: (~A)" ctor))
+              ;; [2021-12-14] （通常の）関数の部分適用との整合性を保つため、(@just)のように無引数で呼ばれる場合も許容するよう変更。
               (T (LET* ((m (- data-arity n))
                         (tmpvars (FREPLICATE m (LAMBDA () (GENSYM "DC")))))
                    `(/. ,@tmpvars (|@p| ,data-tag (|@sv| ,@args ,@tmpvars))))))
