@@ -60,12 +60,20 @@
 
 ;; 構文的でないマクロは、このスペシャル変数に含める
 ;; そうしておくと、展開時に全ての引数が自動的にLISPコードに変換される
-(SETQ *exempted-macro* '(if and or none only list @sv time freeze delay & do prolog? list &cons &cons!))
+(SETQ *exempted-macro* '(if and or none only list |@sv| time freeze delay & do prolog?
+                         xtuple
+                         list &cons &cons! progn prog1 prog2))
 
 ;; そうでない構文的なマクロを定義する際には、式の部分は適宜lispFormを適用してLISPコードに変換する必要がある
 ;; たとえば、非大文字シンボルのクオート処理など
 (DEFUN lispForm (X &OPTIONAL inherits) (FUNCALL 'lisp-form inherits X))
 
+
+(DEFSTRUCT QTUPLE FST SND)
+(DEFUN qtuple (fst snd)
+  (MAKE-QTUPLE :FST fst :SND snd))
+(DEFUN qfst (x) (QTUPLE-FST x))
+(DEFUN qsnd (x) (QTUPLE-FST x))
 
 ;; ERROR
 (DEFUN f_error (arg) (ERROR "LISP3DEV.ADVANCED: f_error ~W" arg))
@@ -117,20 +125,47 @@
            ((EQ x 'false) NIL)
            (T (<unwrap-error> x)))))
 
-(DEFUN |@p| (a b)
-  (XTUPLE* a b))
+(DEFUN <prog-block-error> (op)
+  (ERROR "~A: an expression(s) expected" op))
 
-(DEFUN TUPLE-P (x) (XTUPLE-P x))
+(DEFMACRO progn (&BODY exprs)
+  (UNLESS exprs (<prog-block-error> 'progn))
+  (LIST* 'PROGN exprs))
+
+(DEFMACRO prog1 (&BODY exprs)
+  (UNLESS exprs (<prog-block-error> 'prog1))
+  (LIST* 'PROG1 exprs))
+
+(DEFMACRO prog2 (&BODY exprs)
+  (UNLESS exprs (<prog-block-error> 'prog2))
+  (LIST* 'PROG2 exprs))
+
+(DEFUN |@p| (class-id data)
+  (LISP3DEV.ALGEBRAIC.CORE::%XCONSTRUCT% (GET class-id 'LISP3DEV.ALGEBRAIC.CORE::%ASSOC-CLASS%)
+                                         data))
+
+'(DEFUN |@p| (a b)
+  (IF (SYMBOLP a)
+    (AIF (GET a 'LISP3DEV.ALGEBRAIC.CORE::%ASSOC-CLASS%)
+         (LISP3DEV.ALGEBRAIC.CORE::%XCONSTRUCT% IT b)
+         (P2 a b))
+    (P2 a b)))
+
+;(DEFUN TUPLE-P (x) (XTUPLE-P x))
 '(DEFINE-COMPILER-MACRO TUPLE-P (x) `(XTUPLE-P ,x))
 
-(DEFUN fst (tuple)  (XTUPLE-FST tuple))
-(DEFUN snd (tuple)  (XTUPLE-SND tuple))
-'(DEFINE-COMPILER-MACRO fst (tuple)  `(XTUPLE-FST ,tuple))
-'(DEFINE-COMPILER-MACRO snd (tuple)  `(XTUPLE-SND ,tuple))
+(DEFUN xfst (xtuple)  (XFST xtuple))
+(DEFUN xsnd (xtuple)  (XSND xtuple))
 
+'(DEFUN fst (tuple)  (FST tuple))
+'(DEFUN snd (tuple)  (SND tuple))
 
-(DEFUN (SETF fst) (val x)  (SETF (XTUPLE-FST x) val))
-(DEFUN (SETF snd) (val x)  (SETF (XTUPLE-SND) val))
+'(DEFINE-COMPILER-MACRO xfst (tuple)  `(XTUPLE-FST ,tuple))
+'(DEFINE-COMPILER-MACRO xsnd (tuple)  `(XTUPLE-SND ,tuple))
+
+'(DEFUN (SETF xfst) (val x)  (SETF (XTUPLE-FST x) val))
+'(DEFUN (SETF xsnd) (val x)  (SETF (XTUPLE-SND) val))
+
 '(DEFINE-COMPILER-MACRO (SETF fst) (val x)  `(SETF (XTUPLE-FST ,x) ,val))
 '(DEFINE-COMPILER-MACRO (SETF snd) (val x)  `(SETF (XTUPLE-SND ,x) ,val))
 
@@ -177,7 +212,7 @@
 
 (DEFUN subst (X Y Z) 
   (COND ((ABSEQUAL Y Z) X)
-        ((TUPLE-P Z) (|@p| (subst X Y (fst Z)) (subst X Y (snd Z))))
+        ((QTUPLE-P Z) (qtuple (subst X Y (qfst Z)) (subst X Y (qsnd Z))))
         ((CONSP Z) (CONS (subst X Y (CAR Z)) (subst X Y (CDR Z))))
         (T Z)))        
 
@@ -526,15 +561,18 @@
 (DEFUN tail (X)
  (IF (CONSP X) (&CDR X) (ERROR "tail expects a non-empty list.~% ")))
 
-(DEFUN tuple? (X) (IF (TUPLE-P X) 'true 'false))
+;; todo [2021-12-19]
+(DEFUN tuple? (X) (IF (XTUPLE-P X) 'true 'false))
 
 ;; 遅延リストの比較はしないことに注意
 (DEFUN ABSEQUAL (X Y)
  (COND ((AND (CONSP X) (CONSP Y)) 
         (AND (ABSEQUAL (CAR X) (CAR Y))
              (ABSEQUAL (CDR X) (CDR Y))))
-       ((AND (TUPLE-P X) (TUPLE-P Y))
-         (AND (ABSEQUAL (fst X) (fst Y)) (ABSEQUAL (snd X) (snd Y))))
+       ((AND (QTUPLE-P X) (QTUPLE-P Y))
+         (AND (ABSEQUAL (qfst X) (qfst Y)) (ABSEQUAL (qsnd X) (qsnd Y))))
+       ((AND (XTUPLE-P X) (XTUPLE-P Y))
+         (AND (ABSEQUAL (xfst X) (xfst Y)) (ABSEQUAL (xsnd X) (xsnd Y))))
        ((AND (SIMPLE-VECTOR-P X) (SIMPLE-VECTOR-P Y))
          (LET ((LEN (LENGTH X)))
            (AND (EQL LEN (LENGTH Y))

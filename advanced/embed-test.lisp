@@ -415,7 +415,7 @@ t
            (,X Y) -> [tuple/2 X Y]
            ))
   (and (=== '#~empty-vector #())
-       (=== '(#~tuple/2 a b) (xtuple 'a 'b))
+       (=== '(#~tuple/2 a b) (p2 'a 'b))
     )))
 
 

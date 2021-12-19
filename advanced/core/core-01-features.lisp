@@ -57,9 +57,11 @@
     #:delay #:force #:& #:! #:promise? #:wrap #:unwrap #:zip #:unzip
     #:regex #:$ #:$? ;; <- 正規表現関係
     #:closure? #:function? #:callable? #:list? #:&cons! #:&cons
+
+    #:progn #:prog1 #:prog2
      ;;
      #:def #:compose #:flip
-     #:unsafeCast #:<<xi-simple-fail>> #:unsafeFail #:failed? #:fork
+    #:unsafeCast #:<<xi-simple-fail>> #:unsafeFail #:failed? #:fork
      ))
 
 

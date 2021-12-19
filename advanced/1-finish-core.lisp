@@ -87,11 +87,19 @@
         )))
 
 ;; core-03-reader_load_3.lispから呼ばれる
+;; (defun %local-intern% (name pkg)
+;;   (let ((*package* pkg)
+;;         (c (char name 0)))
+;;     (intern (if (eq c #\~)
+;;               (string-upcase (subseq name 1))
+;;               name))))
+
+;; core-03-reader_load_3.lispから呼ばれる
 (defun %local-intern% (name pkg)
   (let ((*package* pkg)
         (c (char name 0)))
     (intern (if (eq c #\~)
-              (string-upcase (subseq name 1))
+              (subseq name 1)
               name))))
 
 (defun %trans% (x)
@@ -459,9 +467,14 @@
   (<deconstruct-lambda>
    (qi-reader stream :pre-execute t :transformer (lambda (chars) (<trans> "(def xi_lambda -> (/. " chars "))")))))
 
+
+(lisp3dev.base:define-lpar-backslash-reader "CASE" (stream)
+  (<deconstruct-lambda>
+   (qi-reader stream :pre-execute t :transformer (lambda (chars) (<trans> "(def xi_lambda -> (case " chars "))")))))
+
 (lisp3dev.base:define-lpar-backslash-reader "~" (stream)
   (<deconstruct-lambda>
-   (qi-reader stream :pre-execute t :transformer (lambda (chars) (<trans> "(def xi_lambda -> " chars ")")))))
+   (qi-reader stream :pre-execute t :transformer (lambda (chars) (<trans> "(def xi_lambda -> (progn " chars "))")))))
 
 
 ;;OBSOLETE

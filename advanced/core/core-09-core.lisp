@@ -326,6 +326,29 @@
     (IF (NOT (failure? <start_of_list>))
      (IF
       (AND (CONSP (FIRST <start_of_list>))
+       (EQ (FIRST (FIRST <start_of_list>)) '|@p|))
+      (LET
+       ((<pattern1>
+         (<pattern1>
+          (LIST (REST (FIRST <start_of_list>)) (SECOND <start_of_list>)))))
+       (IF (NOT (failure? <pattern1>))
+        (LET ((<pattern2> (<pattern2> <pattern1>)))
+         (IF (NOT (failure? <pattern2>))
+          (LET ((<end_of_list> (<end_of_list> <pattern2>)))
+           (IF (NOT (failure? <end_of_list>))
+            (LIST (FIRST <end_of_list>)
+             (CONS '|@p|
+              (CONS (SECOND <pattern1>) (CONS (SECOND <pattern2>) NIL))))
+            NIL))
+          NIL))
+        NIL))
+      NIL)
+     NIL)))
+  (BLOCK localfailure
+   (LET ((<start_of_list> (<start_of_list> Stream)))
+    (IF (NOT (failure? <start_of_list>))
+     (IF
+      (AND (CONSP (FIRST <start_of_list>))
        (EQ (FIRST (FIRST <start_of_list>)) 'cons))
       (LET
        ((<pattern1>
@@ -845,14 +868,14 @@
       (LET*
           ((V300 (CDR V294)) (V301 (CAR V294)) (V302 (CDR V301)) (V303 (CAR V302))
            (V304 (CDR V303)))
-        (add-test (CONS 'TUPLE-P V300))
+        (add-test (CONS 'XDATA-P V300))
         (LET
             ((Abstraction
                (LIST '/. (CAR V304)
                      (LIST '/. (CAR (CDR V304)) (ebr (CAR V300) V303 (CAR (CDR V302)))))))
           (LET
               ((Application
-                 (LIST (LIST Abstraction (CONS 'fst V300)) (CONS 'snd V300))))
+                 (LIST (LIST Abstraction (CONS 'xfst V300)) (CONS 'xsnd V300))))
             (reduce-help Application)))))
 
     ;; JUN HACK

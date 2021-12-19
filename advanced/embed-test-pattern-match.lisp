@@ -34,7 +34,7 @@
        (= 0 (test '(a a)))
        (= 1 (test '(a (b C d) b c d)))
        (= 1 (test '(a 0 . 0)))
-       (equal '(a b c) (test (cons 'a (xtuple 'b 'c))))))
+       (equal '(a b c) (test (cons 'a (p2 'b 'c))))))
 
 
 #Verify リストのパターンマッチ＆再帰
@@ -56,14 +56,14 @@
          (,A,B,B,C) -> [A B C]
          (,A,B,C,D) -> [A B C D]
          (,_,B) -> B))
-  (and (= 2 (test (xtuple 1 2)))
-       (= 1 (test (xtuple 1 '(2))))
-       (eq '#~nul (test (xtuple 0 nil)))
-       (equal '(4 3 2 1) (test (\\@p 4 3 2 1)))
-       (equal '(1 2 3) (test (\\@p 1 2 2 3)))
+  (and (= 2 (test (p2 1 2)))
+       (= 1 (test (p2 1 '(2))))
+       (eq '#~nul (test (p2 0 nil)))
+       (equal '(4 3 2 1) (test (p4 4 3 2 1)))
+       (equal '(1 2 3) (test (p4 1 2 2 3)))
        ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 #Comment
-(equalp (xtuple 1 2) (xtuple 1 2))
+(equalp (p2 1 2) (p2 1 2))
 (\xenv (#x,y,#~foo))

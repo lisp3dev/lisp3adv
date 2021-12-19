@@ -652,12 +652,20 @@
    ;; RE-HACK [2018-09-17]
    ;; ３値以上のタプル表現の変換
    ;; それぞれのクラスに属するようにコンストラクタを取得
+   ;;((AND (CONSP V1) (EQ (CAR V1) '|@p|) (CONSP (CDR V1)) (CONSP (CDDR V1)) (CONSP (CDDDR V1)))
    ((AND (CONSP V1) (EQ (CAR V1) '|@p|) (CONSP (CDR V1)) (CONSP (CDDR V1))
-         (CONSP (CDDDR V1)))
+         (NOT (AND (SYMBOLP (CADR V1))
+                   (GET (CADR V1) 'LISP3DEV.ALGEBRAIC.CORE::%ASSOC-CLASS%))))
+
+   ;((AND (CONSP V1) (EQ (CAR V1) '|@p|))
      (LET ((arity (LIST-LENGTH (CDR V1))))
-       (WHEN (> arity *TUPLE-MAX*) 
-         (ERROR "(in (@p ...): too many elements: MAX=~A" *TUPLE-MAX*))
-       (proc_specialforms (CONS (SVREF LISP3DEV.ALGEBRAIC.CORE::%TUPLE-CONVERSION-VECTOR% arity) (CDR V1)))))
+       (WHEN (> arity LISP3DEV.ALGEBRAIC.CORE::%TUPLE-MAX%) 
+         (ERROR "(in (@p ...): too many elements: MAX=~A" LISP3DEV.ALGEBRAIC.CORE::%TUPLE-MAX%))
+       ;(proc_specialforms (CONS (SVREF LISP3DEV.ALGEBRAIC.CORE::%TUPLE-CONVERSION-VECTOR% arity) (CDR V1)))))
+       (proc_specialforms (CONS
+                           (GET (NTH arity LISP3DEV.ALGEBRAIC.CORE::%TUPLE-CLASS-NAMES%)
+                                'LISP3DEV.ALGEBRAIC.CORE::%FP-CTOR%)
+                           (CDR V1)))))
 
    ;; HACK [2018-09-14] 効率のよい実装にすべき
    ;; ３値以上の@cの展開
@@ -676,7 +684,7 @@
    ;;; (symbol# x) -> (@p symbol# x)
    ;;; (symbol# x y...) -> (@p symbol# (# x y...))
    ((AND (CONSP V1) (SYMBOLP (CAR V1))
-         (GET (CAR V1) 'LISP3DEV.ALGEBRAIC.XDATA::|%data_tag%|)
+         (GET (CAR V1) 'LISP3DEV.ALGEBRAIC.CORE::%XQUERY%)
          ;; (NOT (MEMBER (CAR V1) '(|cons| |@p|))) ;; <<- この判定は単なる高速化のため 
          ;; (LET ((symName (SYMBOL-NAME (CAR V1))))  
          ;;   (EQ #\# (CHAR symName (1- (LENGTH symName)))))
@@ -686,21 +694,22 @@
      ;;(UNLESS (GET (CAR V1) 'LISP3DEV.ALGEBRAIC.XDATA::|%data_tag%|) (WARN "xi: (~A ...) is unknown type constructor" (CAR V1)))
 
      (LET* ((ctor (CAR V1))
-            (data-tag (GET ctor 'LISP3DEV.ALGEBRAIC.XDATA::|%data_tag%|))
-            (data-arity (GET ctor 'LISP3DEV.ALGEBRAIC.XDATA::|%data_arity%|))
+            (xquery (GET ctor 'LISP3DEV.ALGEBRAIC.CORE::|%XQUERY%|))
+            (class-id (FUNCALL xquery :ID))
+            (data-arity (FUNCALL xquery :ARITY))
             (args (CDR V1))
             (n (LENGTH args)))
        (proc_specialforms
         (COND ((EQL data-arity n)
                 (CASE n
-                 (0 (LIST '|@p| data-tag NIL))
-                 (1 (LIST '|@p| data-tag (CAR args)))
-                 (T `(|@p| ,data-tag (|@sv| ,@args)))))
+                 (0 (LIST '|@p| class-id NIL))
+                 (1 (LIST '|@p| class-id (CAR args)))
+                 (T `(|@p| ,class-id (|@sv| ,@args)))))
               ((> n data-arity) (ERROR "too many arguments for (~A ...): ~A" ctor V1))
               ;; [2021-12-14] （通常の）関数の部分適用との整合性を保つため、(@just)のように無引数で呼ばれる場合も許容するよう変更。
               (T (LET* ((m (- data-arity n))
                         (tmpvars (FREPLICATE m (LAMBDA () (GENSYM "DC")))))
-                   `(/. ,@tmpvars (|@p| ,data-tag (|@sv| ,@args ,@tmpvars))))))
+                   `(/. ,@tmpvars (|@p| ,class-id (|@sv| ,@args ,@tmpvars))))))
           
         )))
 

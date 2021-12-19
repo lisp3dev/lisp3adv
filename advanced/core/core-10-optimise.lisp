@@ -71,7 +71,7 @@
     (CONSP (CAR (CDR V12))) (EQ 'tuple? (CAR (CAR (CDR V12))))
     (CONSP (CDR (CAR (CDR V12)))) (NULL (CDR (CDR (CAR (CDR V12)))))
     (NULL (CDR (CDR V12))))
-   (LIST 'TUPLE-P (optimise-calls (CAR (CDR (CAR (CDR V12)))))))
+   (LIST 'XTUPLE-P (optimise-calls (CAR (CDR (CAR (CDR V12)))))))
   ((AND (CONSP V12) (EQ 'wrapper (CAR V12)) (CONSP (CDR V12))
     (CONSP (CAR (CDR V12))) (EQ 'string? (CAR (CAR (CDR V12))))
     (CONSP (CDR (CAR (CDR V12)))) (NULL (CDR (CDR (CAR (CDR V12)))))
@@ -252,10 +252,10 @@
    (THE NUMBER
     (+ (THE NUMBER (occurrences V53 (CAR V54)))
      (THE NUMBER (occurrences V53 (CDR V54))))))
-  ((TUPLE-P V54)
+  ((QTUPLE-P V54)
    (THE NUMBER
-    (+ (THE NUMBER (occurrences V53 (fst V54)))
-     (THE NUMBER (occurrences V53 (snd V54))))))
+    (+ (THE NUMBER (occurrences V53 (qfst V54)))
+     (THE NUMBER (occurrences V53 (qsnd V54))))))
   (T 0)))
 
 (DEFUN make-local-assignments (V1 V2)
@@ -360,8 +360,8 @@
    (LET*
     ((V111 (CAR V110)) (V112 (CAR V111)) (V113 (CDR V112)) (V114 (CAR V113)))
     (LET ((Partition (part V114 V110 NIL)))
-     (LET ((PattP (fst Partition)))
-      (LET ((ExclP (snd Partition)))
+     (LET ((PattP (qfst Partition)))
+      (LET ((ExclP (qsnd Partition)))
        (if (THE SYMBOL (empty? PattP))
         (LIST 'IF V112 (return-return (CAR (CDR V111))) (factor (CDR V110)))
         (LET ((Tag (gensym "tag")))
@@ -450,7 +450,7 @@
    (LET* ((V178 (CAR V176)) (V179 (CAR V178)) (V180 (CDR V179)))
     (part (CAR V180) (CDR V176)
      (CONS (CONS (CONS (CAR V179) (CDR V180)) (CDR V178)) V177))))
-  (T (@p (REVERSE V177) V176))))
+  (T (qtuple (REVERSE V177) V176))))
 
 (DEFUN optimise-type-declarations (V25)
  (COND

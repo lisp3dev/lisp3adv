@@ -179,7 +179,7 @@
   ((CONSP V94)
    (CONS (CAR V94)
     (THE LIST (MAPCAR #'(LAMBDA (Y) (lisp-form V93 Y)) (CDR V94)))))
-  ((TUPLE-P V94) (|@p| (lisp-form V93 (fst V94)) (lisp-form V93 (snd V94))))
+  ((QTUPLE-P V94) (qtuple (lisp-form V93 (qfst V94)) (lisp-form V93 (qsnd V94))))
   (T V94)))
 
 (DEFUN bld-assoc (V110 V111)
