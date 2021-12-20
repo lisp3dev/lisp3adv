@@ -653,6 +653,8 @@
    ;; ３値以上のタプル表現の変換
    ;; それぞれのクラスに属するようにコンストラクタを取得
    ;;((AND (CONSP V1) (EQ (CAR V1) '|@p|) (CONSP (CDR V1)) (CONSP (CDDR V1)) (CONSP (CDDDR V1)))
+
+   ;; HACK [2021-12-20] ２値以上のタプルの変換に変更
    ((AND (CONSP V1) (EQ (CAR V1) '|@p|) (CONSP (CDR V1)) (CONSP (CDDR V1))
          (NOT (AND (SYMBOLP (CADR V1))
                    (GET (CADR V1) 'LISP3DEV.ALGEBRAIC.CORE::%ASSOC-CLASS%))))
@@ -679,11 +681,8 @@
              (proc_specialforms (CAR V5))
              (proc_specialforms (CONS src-op (CDR V5))))))
 
-   ;;; TEST HACK JUN
-   ;;; (symbol#) -> (@p symbol# [])
-   ;;; (symbol# x) -> (@p symbol# x)
-   ;;; (symbol# x y...) -> (@p symbol# (# x y...))
-   ((AND (CONSP V1) (SYMBOLP (CAR V1))
+   ;;; XDATAのコンストラクタ
+   ((AND (CONSP V1) (SYMBOLP (CAR V1)) (NOT (MEMBER (CAR V1) '(|@p| |@c| |@sv|)))
          (GET (CAR V1) 'LISP3DEV.ALGEBRAIC.CORE::%XQUERY%)
          ;; (NOT (MEMBER (CAR V1) '(|cons| |@p|))) ;; <<- この判定は単なる高速化のため 
          ;; (LET ((symName (SYMBOL-NAME (CAR V1))))  

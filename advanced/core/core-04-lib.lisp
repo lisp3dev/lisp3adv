@@ -140,11 +140,11 @@
   (UNLESS exprs (<prog-block-error> 'prog2))
   (LIST* 'PROG2 exprs))
 
-(DEFUN |@p| (class-id data)
+'(DEFUN |@p| (class-id data)
   (LISP3DEV.ALGEBRAIC.CORE::%XCONSTRUCT% (GET class-id 'LISP3DEV.ALGEBRAIC.CORE::%ASSOC-CLASS%)
                                          data))
 
-'(DEFUN |@p| (a b)
+(DEFUN |@p| (a b)
   (IF (SYMBOLP a)
     (AIF (GET a 'LISP3DEV.ALGEBRAIC.CORE::%ASSOC-CLASS%)
          (LISP3DEV.ALGEBRAIC.CORE::%XCONSTRUCT% IT b)
