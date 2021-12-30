@@ -64,6 +64,18 @@
     #:unsafeCast #:<<xi-simple-fail>> #:unsafeFail #:failed? #:fork
      ))
 
+(DEFPARAMETER *sysfuncs* 
+  '(#:and #:append #|#:apply|# #:arity #:assoc #:assoc-type #:boolean? #:character?  #:complex? #:concat #:congruent? #:cons? #:cons   #:destroy #:difference #:do #:dump #:element? #:empty? #:error #:eval #:explode #:fail-if #:findall #:fix #:float? #:freeze #:gensym #:get-array #:get-prop #:head #:identical #:if #:if-with-checking #:if-without-checking #:include #:include-all-but #:input #:input+ #:integer?  #:intersection #:length #:let  #:list  #:make-array #:make-string #:map #:mapcan  #:multi #:not #:nth #:number?  #:or #:opaque #:profile #:profile-results  #:put-array #:put-prop #:random #:rational?    #:real? #:remove #:reverse #:round #:rule #:set #:specialise #:speed  #:sqrt #:string?  #:subst #|#:symbol?|# #:tail  #:thaw #:time  #:unassoc-type  #:union #:unprofile #:unsugar #:value  #:variable?  #:warn  #:qi_> #:qi_< #:qi_>= #:qi_<= #:qi_= #:+ #:* #:/ #:/. #:- #:qi_= #:qi_/= #:|@p| #:|@c| #:|@sv| #:svlen #:svref #:when #:is #:bind #:return #:call #:none #:only
+    #:delay #:force #:& #:! #:promise? #:wrap #:unwrap #:zip #:unzip
+    #:regex #:$ #:$? ;; <- 正規表現関係
+    #:closure? #:function? #:callable? #:list? #:&cons! #:&cons
+
+    #:progn #:prog1 #:prog2
+     ;;
+     #:def #:compose #:flip
+    #:failed? #:fork
+     ))
+
 
 
 
@@ -79,7 +91,7 @@
 (SETQ *sysfuncs* (MAPCAR #'<intern> *sysfuncs*))
 (IMPORT *sysfuncs*)
 
-(MAPC (LAMBDA (sym) (IMPORT (<intern> sym)))
+'(MAPC (LAMBDA (sym) (IMPORT (<intern> sym)))
       '(#:true #:false #:|{| #:|}| #:-> #:<- #:--> #:_ #:|:| #:where #:variable #:boolean #:symbol #:string 
         #:character #:list #:number #:array #:|;| #:|,| #:&& #:mode #:name #:>> #:yes #:no #:typecheck 
         #:wff #:verified #:call #:when #:-*- #:-s- #:cut #:-*- #:! #:loaded #:lazy #:in #:out #:fail! #:=!
@@ -92,6 +104,21 @@
         #:let* #:compose #:flip
         ;; &で始まるシンボルはQSPACEにインターンされるため、特にグローバルなシンボルについてはエクスポートしておく
         #:&CONS #:&CONS! #:&LIST #:&LIST*))
+
+(MAPC (LAMBDA (sym) (IMPORT (<intern> sym)))
+      '(#:true #:false  #:-> #:<- #:--> #:_ #:|:| #:where #:variable #:boolean #:symbol #:string 
+        #:character #:list #:number #:array #:|;| #:|,| #:&& #:mode #:name #:>> #:yes #:no #:typecheck 
+        #:wff #:verified #:call #:when  #:cut  #:! #:loaded #:lazy #:in #:out #:fail! #:=!
+        #:profiled
+        
+        #:def #:decl #:type  #:where* #:cl #:cl*
+        #:loop #:while #:until #:break #:BREAK #:provide #:provide* #:for #:count
+        #:case #:xi_lambda #:lambda #:fork #:=> #:view #:|@sv*| #:|@| #:unless #:== #:!= #:=== #:!== 
+        
+        #:let* #:compose #:flip
+        ;; &で始まるシンボルはQSPACEにインターンされるため、特にグローバルなシンボルについてはエクスポートしておく
+        #:&CONS #:&CONS! #:&LIST #:&LIST*))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;; Added by JUN ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

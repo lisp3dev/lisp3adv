@@ -439,6 +439,12 @@
 
 (DEFUN <expand-where-bind-syntax> (V)
   ;; (where A E1 B E2 C E3 MAIN) --> ((((/. A (/. B (/. C MAIN))) E1) E2) E3)
+
+  (WHEN (EQ (CAR V) '=>)
+    ;;  -> exp binding...は binding... expの形に変形する
+    (SETQ V (APPEND (CDDR V) (CONS (CADR V) NIL))))
+
+
   (LET ((main-exp (CAR (LAST V)))
         (pair-stream (BUTLAST V))
         params
@@ -461,6 +467,10 @@
   ;; (where* A E1 B E2 MAIN) --> (where A E1 (where B E2 MAIN))の等価表現
   ;; (where* A E1 B E2 C E3 MAIN) --> ((/. A ((/. B ((/. C MAIN) E3)) E2) E1))
   
+  (WHEN (EQ (CAR V) '=>)
+    ;;  -> exp binding...は binding... expの形に変形する
+    (SETQ V (APPEND (CDDR V) (CONS (CADR V) NIL))))
+
   (LET ((main-exp (CAR (LAST V)))
         (pair-stream (BUTLAST V))
         pattern-and-param-pairs
@@ -487,6 +497,14 @@
 (DEFUN proc_specialforms (V1)
   ;;(PRINT (LIST V1))
   (COND
+
+    ;; [2021-12-20]
+    ((AND (CONSP V1) (OR (EQ 'let (CAR V1)) (EQ 'let* (CAR V1)))
+          (CDR V1) (EQ (CADR V1) '=>))
+      (LET ((op (CAR V1))
+            (exp (CADDR V1)))
+       (proc_specialforms (PRINT (APPEND (CONS op (CDDDR V1)) (CONS exp NIL))))))
+
 
     ;; case
     ((AND (CONSP V1) (EQ 'case (CAR V1)))
@@ -632,6 +650,8 @@
                           (<expand-where-bind-syntax> (CDR V1))
                           (<expand-where*-bind-syntax> (CDR V1)))))
 
+   
+   
    ;; 特殊コンストラクタの変換 ただし、(op arg1 arg2) or (op arg1) or (op)の形の場合のみ
    ((AND (CONSP V1) (MEMBER (CAR V1) '(|@c|)) (NULL (CDDDR V1)))
      (LET ((V5 (CDR V1))

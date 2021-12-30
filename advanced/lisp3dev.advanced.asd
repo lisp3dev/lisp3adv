@@ -17,7 +17,7 @@
                          (:file "core-04-lib")
                          (:file "core-05-arity")
                          (:file "core-06-eval")
-                         ;;(:file "core-07-writer_load7")
+                         (:file "core-07-writer")
                          (:file "core-08-toplevel")
                          (:file "core-09-core")
                          (:file "core-10-optimise")
@@ -26,7 +26,8 @@
                          ))
                (:file "1-finish-core")
                (:file "package")
-
+               (:file "sysfuncs")
+               
                (:file "embed-test")
                (:file "embed-test-pattern-match")
 

@@ -173,11 +173,12 @@ t
 #Verify
 (flet ((\let test
          (or (WHEN NUMBERP) symbol?) -> 0
-         (or (WHEN SYMBOLP) (not symbol?)) -> 1
+         ;;(or (WHEN SYMBOLP) (not symbol?)) -> 1
+         _ -> 2
          ))
   (and (eql 0 (test '#~foo))
        (eql 0 (test 10))
-       (eql 1 (test 'foo))
+       (eql 0 (test 'foo))
        ))
 
 

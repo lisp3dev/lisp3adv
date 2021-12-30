@@ -61,7 +61,7 @@
 ;; 構文的でないマクロは、このスペシャル変数に含める
 ;; そうしておくと、展開時に全ての引数が自動的にLISPコードに変換される
 (SETQ *exempted-macro* '(if and or none only list |@sv| time freeze delay & do prolog?
-                         xtuple
+                         xtuple <03/opt-protection>
                          list &cons &cons! progn prog1 prog2))
 
 ;; そうでない構文的なマクロを定義する際には、式の部分は適宜lispFormを適用してLISPコードに変換する必要がある
